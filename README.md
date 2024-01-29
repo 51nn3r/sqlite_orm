@@ -9,6 +9,9 @@ from sqlite_orm.engine import engine
 class Cat(Model):
     def __set_columns__(self):
         self.name = StringField()
+
+
+engine.register_all(Cat)
 ```
 
 # Create table:
