@@ -1,15 +1,14 @@
 # Define table:
 ```
-from column_types import Integer, String
-from engine import Model, Column, set_db_name
+from sqlite_orm.model import Model
+from sqlite_orm.columns.string_field import StringField
+
+from sqlite_orm.engine import engine
 
 
-class Cats(Model):
-    __tablename__ = 'cats'
-
+class Cat(Model):
     def __set_columns__(self):
-        self.id = Column(Integer, primary_key=True)
-        self.name = Column(String)
+        self.name = StringField()
 ```
 
 # Create table:
