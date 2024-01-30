@@ -97,7 +97,7 @@ class Cat(Model):
     def __set_columns__(self):
         self.name = StringField()
 		
-		"""  defualt related name (here cat_set), can be changed by using param related_name  """
+	"""  defualt related name (here cat_set), can be changed by using param related_name  """
         self.house = ForeignKey(House, related_name='cats', ondelete='CASCADE')
 
 
