@@ -78,11 +78,3 @@ also available
 ```
 Cats(id=1337).one().delete()
 ```
-
-# Database name
-Default name is db.sqlite3, call `set_db_name()` from engine.py to change it.
-
-```
-from engine import set_db_name
-set_db_name('new_db.sqlite3')
-```
