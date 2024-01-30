@@ -78,3 +78,39 @@ also available
 ```
 Cats(id=1337).one().delete()
 ```
+
+# Foreign keys example
+
+```
+from sqlite_orm.model import Model
+from sqlite_orm.engine import engine
+from sqlite_orm.columns.string_field import StringField
+from sqlite_orm.columns.foreign_key import ForeignKey
+
+
+class House(Model):
+    def __set_columns__(self):
+        self.name = StringField()
+
+
+class Cat(Model):
+    def __set_columns__(self):
+        self.name = StringField()
+		
+		"""  defualt related name (here cat_set), can be changed by using param related_name  """
+        self.house = ForeignKey(House, related_name='cats', ondelete='CASCADE')
+
+
+engine.register_all(City, House, Cat)
+
+house = House(name='pets', city=city1).save()
+
+tom = Cat(name='tom', house=house).save()
+marta = Cat(name='marta', house=house).save()
+
+Cat(name='tom1').update(house=house1)
+print(house.cats())
+
+```
+
+default related name is f'{lowercase(tablename)}_set'
