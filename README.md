@@ -108,7 +108,6 @@ house = House(name='pets', city=city1).save()
 tom = Cat(name='tom', house=house).save()
 marta = Cat(name='marta', house=house).save()
 
-Cat(name='tom1').update(house=house1)
 print(house.cats())
 
 ```
