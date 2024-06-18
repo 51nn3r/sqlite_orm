@@ -1,7 +1,8 @@
 from typing import List
 from typing import Optional
 
-from sqlite_orm.column_attributes.default import DEFAULT
+from sqlite_orm.column_attributes.autoincrement import AUTOINCREMENT
+from sqlite_orm.column_attributes.not_null import NOT_NULL
 from sqlite_orm.column_attributes.primary_key import PRIMARY_KEY
 from sqlite_orm.column_attributes.required import REQUIRED
 from sqlite_orm.column_attributes.column_attribute import ColumnAttribute
@@ -9,6 +10,7 @@ from sqlite_orm.column_attributes.column_attribute import ColumnAttribute
 
 class Column:
     _name: str | None
+    _type: None
     _attributes: List[ColumnAttribute]
 
     def __init__(
@@ -20,7 +22,8 @@ class Column:
         self._attributes = [a for a in args if isinstance(a, ColumnAttribute)]
 
         supported_kwargs = [
-            'default',
+            'autoincrement'
+            'not_null',
             'primary_key',
             'required',
         ]
@@ -33,8 +36,10 @@ class Column:
 
         for attribute_name, attribute in column_kwargs.items():
             if not isinstance(attribute, ColumnAttribute):
-                if attribute_name == 'default':
-                    self._attributes.append(DEFAULT)
+                if attribute_name == 'autoincrement':
+                    self._attributes.append(AUTOINCREMENT)
+                if attribute_name == 'not_null':
+                    self._attributes.append(NOT_NULL)
                 if attribute_name == 'primary_key':
                     self._attributes.append(PRIMARY_KEY)
                 if attribute_name == 'required':
@@ -54,6 +59,10 @@ class Column:
     @property
     def name(self) -> str | None:
         return self._name
+
+    @property
+    def type(self) -> str | None:
+        return self._type
 
     @property
     def attributes(self) -> List[ColumnAttribute]:

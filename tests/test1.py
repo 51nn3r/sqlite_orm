@@ -2,7 +2,7 @@ from sqlite_orm.model import Model
 from sqlite_orm.columns.string_field import StringField
 from sqlite_orm.columns.foreign_key import ForeignKey
 
-from sqlite_orm.engine import engine
+from sqlite_orm.init import init
 
 
 class House(Model):
@@ -16,12 +16,11 @@ class Cat(Model):
         self.house = ForeignKey(House, ondelete='CASCADE')
 
 
+engine = init.engine
 engine.register_all(House, Cat)
 print('========================')
 
 print(engine._models)
-for k, v in engine._foreign_keys.items():
-    print(k, v)
 
 ''''''
 house1 = House(name='pets').save()

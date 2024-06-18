@@ -7,6 +7,8 @@ from sqlite_orm.columns.column import Column
 class DatetimeField(Column):
     _value: datetime | None
 
+    _type = 'TEXT'
+
     def __init__(
             self,
             *args,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import List
+from typing import Callable
 
 from sqlite_orm.engine import Engine
 from sqlite_orm.engine import engine
@@ -12,7 +13,7 @@ from sqlite_orm.column_attributes.autoincrement import AUTOINCREMENT
 from sqlite_orm.column_attributes.not_null import NOT_NULL
 
 from sqlite_orm.settings import PRIMARY_KEY_DEFAULT_NAME
-
+from sqlite_orm.settings import DEBUG
 
 class Model:
     _columns: List[Column]
@@ -44,9 +45,9 @@ class Model:
         self._engine = engine
         self._columns: List[Column] = []
         self._primary_key = None
-        self._table_name = self.__class__.__name__.lower()
+        self._table_name = self.compute_table_name()
         self.__set_columns__()
-        self._engine.set_feedbacks(self)
+        # self._engine.set_feedbacks(self)
         _args = list(args)
 
         columns = []
@@ -181,6 +182,27 @@ class Model:
             postfix += 1
 
         return name
+
+    @classmethod
+    def compute_table_name(cls):
+        return cls.__name__.lower()
+
+    @classmethod
+    def add_related_method(
+            cls,
+            foreign_key: ForeignKey,
+    ):
+        def related_method(
+                self,
+        ):
+            related_model = foreign_key.bound_model
+            kwargs = {foreign_key.name: self.primary_key.value}
+            if DEBUG:
+                print(kwargs)
+
+            return related_model(**kwargs).all()
+
+        setattr(cls, foreign_key.related_name, related_method)
 
     def __str__(self):
         return '{' + f'{self._table_name}: ' + ', '.join([f'{column.name}={getattr(self, column.name)}'

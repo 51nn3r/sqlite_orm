@@ -6,7 +6,7 @@ class Default(ColumnAttribute):
         self.default_value = default
 
     def __str__(self):
-        return f'DEFAULT {self.default_value}'
+        return f'DEFAULT {self.default_value if self.default_value is not None else "None"}'
 
 
 DEFAULT: Default = Default()

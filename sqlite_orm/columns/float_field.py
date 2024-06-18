@@ -4,6 +4,8 @@ from sqlite_orm.columns.column import Column
 class FloatField(Column):
     _value: float | None
 
+    _type = 'FLOAT'
+
     def __init__(
             self,
             *args,
@@ -28,4 +30,4 @@ class FloatField(Column):
         return self._value
 
     def __str__(self):
-        return 'FLOAT'
+        return self._type

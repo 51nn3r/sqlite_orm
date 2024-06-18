@@ -1,5 +1,4 @@
 from typing import List
-from typing import Dict
 
 import sqlite3
 
@@ -27,13 +26,11 @@ class Engine:
     _connection: sqlite3.Connection
     _cursor: sqlite3.Cursor
     _models: List[type]
-    _foreign_keys: Dict[type, List[ForeignKey]]
 
     def __init__(self):
         self._connection: sqlite3.Connection = sqlite3.connect(DATABASE_FILE, timeout=CONNECTION_WAITING_TIMEOUT)
         self._cursor: sqlite3.Cursor = self._connection.cursor()
         self._models: List[type] = []
-        self._foreign_keys: Dict[type, List[ForeignKey]] = {}
 
         keys_on = 'PRAGMA foreign_keys = ON'
         self._cursor.execute(keys_on)
@@ -64,40 +61,7 @@ class Engine:
                 if column.related_name is None:
                     column.set_related_name(f'{model.table_name}_set')
 
-                if column.model not in self._foreign_keys:
-                    self._foreign_keys.update({column.model: []})
-
-                foreign_keys = self._foreign_keys.get(column.model)
-                for key in foreign_keys:
-                    if key.related_name == column.related_name:
-                        raise "multiple using one related name for one model"
-
-                self._foreign_keys[column.model].append(column)
-
-    def set_feedbacks(
-            self,
-            model,
-    ):
-        if model.__class__ not in self._foreign_keys:
-            return
-
-        for foreign_key in self._foreign_keys[model.__class__]:
-            def feedback_function(self):
-                return self._engine.feedback(self, foreign_key)
-
-            setattr(model, foreign_key.related_name, feedback_function.__get__(model))
-
-    def feedback(
-            self,
-            model,
-            foreign_key,
-    ):
-        related_model = foreign_key.bound_model
-        kwargs = {foreign_key.name: model.primary_key.value}
-        if DEBUG:
-            print(kwargs)
-
-        return related_model(**kwargs).all()
+                column.model.add_related_method(column)
 
     def __del__(self):
         self._cursor.close()
@@ -244,6 +208,14 @@ class Engine:
             self._cursor.execute(query, [column.sql_value for column in changed_columns] +
                                  [model.primary_key.sql_value])
             self._connection.commit()
+
+    @property
+    def models(self):
+        return self._models
+
+    @property
+    def cursor(self):
+        return self._cursor
 
 
 engine: Engine = Engine()

@@ -4,6 +4,8 @@ from sqlite_orm.columns.column import Column
 class StringField(Column):
     _value: str | None
 
+    _type = 'TEXT'
+
     def __init__(
             self,
             *args,
@@ -28,4 +30,4 @@ class StringField(Column):
         return self._value
 
     def __str__(self):
-        return 'TEXT'
+        return self._type

@@ -1,5 +1,5 @@
 from sqlite_orm.model import Model
-from sqlite_orm.engine import engine
+from sqlite_orm.init import init
 from sqlite_orm.columns.string_field import StringField
 from sqlite_orm.columns.foreign_key import ForeignKey
 
@@ -21,9 +21,9 @@ class Cat(Model):
         self.house = ForeignKey(House, related_name='cats', ondelete='CASCADE')
 
 
-engine.register_all(City, House, Cat)
+init.register_all(City, House, Cat)
 
-city1 = City(name='sign_city').save()
+city1 = City(name='sin_city').save()
 
 house1 = House(name='pets', city=city1).save()
 house2 = House(name='dead_pet', city=city1).save()

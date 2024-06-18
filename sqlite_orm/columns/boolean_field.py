@@ -4,6 +4,8 @@ from sqlite_orm.columns.column import Column
 class BooleanField(Column):
     _value: int | None
 
+    _type = 'INTEGER'
+
     def __init__(
             self,
             *args,
@@ -31,4 +33,4 @@ class BooleanField(Column):
         return self._value
 
     def __str__(self):
-        return 'INTEGER'
+        return self._type

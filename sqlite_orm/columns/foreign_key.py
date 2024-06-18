@@ -12,6 +12,8 @@ class ForeignKey(Column):
     _value: Optional
     _ondelete: str | None
 
+    _type = 'INTEGER'
+
     def __init__(
             self,
             model,
@@ -83,4 +85,4 @@ class ForeignKey(Column):
             other.related_name == self.related_name
 
     def __str__(self):
-        return 'INTEGER'
+        return self._type
