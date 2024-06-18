@@ -1,15 +1,17 @@
 # Define table:
 ```
-from column_types import Integer, String
-from engine import Model, Column, set_db_name
+from sqlite_orm.model import Model
+from sqlite_orm.columns.string_field import StringField
+
+from sqlite_orm.engine import engine
 
 
-class Cats(Model):
-    __tablename__ = 'cats'
-
+class Cat(Model):
     def __set_columns__(self):
-        self.id = Column(Integer, primary_key=True)
-        self.name = Column(String)
+        self.name = StringField()
+
+
+engine.register_all(Cat)
 ```
 
 # Create table:
@@ -77,10 +79,37 @@ also available
 Cats(id=1337).one().delete()
 ```
 
-# Database name
-Default name is db.sqlite3, call `set_db_name()` from engine.py to change it.
+# Foreign keys example
 
 ```
-from engine import set_db_name
-set_db_name('new_db.sqlite3')
+from sqlite_orm.model import Model
+from sqlite_orm.engine import engine
+from sqlite_orm.columns.string_field import StringField
+from sqlite_orm.columns.foreign_key import ForeignKey
+
+
+class House(Model):
+    def __set_columns__(self):
+        self.name = StringField()
+
+
+class Cat(Model):
+    def __set_columns__(self):
+        self.name = StringField()
+		
+	"""  defualt related name (here cat_set), can be changed by using param related_name  """
+        self.house = ForeignKey(House, related_name='cats', ondelete='CASCADE')
+
+
+engine.register_all(City, House, Cat)
+
+house = House(name='pets', city=city1).save()
+
+tom = Cat(name='tom', house=house).save()
+marta = Cat(name='marta', house=house).save()
+
+print(house.cats())
+
 ```
+
+default related name is f'{lowercase(tablename)}_set'
